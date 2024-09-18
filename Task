@@ -1,0 +1,181 @@
+ЗАДАНИЕ 1
+Оригинальный скрипт:
+
+def is_even(value):
+    return value % 2 == 0
+
+Плюсы:
+Деление по модулю - это стандартная математическая операция, поэтому ее легче воспринимать.
+Минусы:
+При больших числах и загруженном стеке деление по модулю происходит медленнее. Числа с плавающей точкой могут быть разделены неправильно.
+
+Альт скрипт:
+
+def is_even(value):
+    return (value & 1) == 0
+
+Плюсы:
+Побитовая операция может выполняться быстрее, поскольку это низкоуровневая операция. Она подходит для системного уровня и ситуаций, когда требуется максимальная производительность.
+Минусы:
+Не все могут сразу понять, что value & 1 проверяет четность, поскольку это менее очевидно, чем деление по модулю. Как и в первом случае, если value не является целым числом, деление может произойти неправильно
+
+
+
+
+
+
+ЗАДАНИЕ 2
+
+Скрипт 1: 
+
+import array
+
+class CyclicBufferArray:
+    def __init__(self, size):
+        self.size = size
+        self.buffer = array.array('i', [0] * size)  
+        self.head = 0
+        self.tail = 0
+        self.is_full = False
+
+    def append(self, value):
+        self.buffer[self.tail] = value
+        if self.is_full:
+            self.head = (self.head + 1) % self.size
+        self.tail = (self.tail + 1) % self.size
+        self.is_full = self.tail == self.head
+
+    def get_all(self):
+        if self.head <= self.tail or self.is_full:
+            return list(self.buffer[self.head:self.tail]) if self.head < self.tail else list(self.buffer[self.head:]) + list(self.buffer[:self.tail])
+        return list(self.buffer[self.head:]) + list(self.buffer[:self.tail])
+
+    def __str__(self):
+        return str(self.get_all())
+
+Скрипт 2: 
+
+from queue import Queue
+
+class CyclicBufferQueue:
+    def __init__(self, size):
+        self.size = size
+        self.buffer = Queue(maxsize=size)
+
+    def append(self, value):
+        if self.buffer.full():
+            self.buffer.get()  
+        self.buffer.put(value)
+
+    def get_all(self):
+        return list(self.buffer.queue)  
+
+    def __str__(self):
+        return str(self.get_all())
+
+
+Скрипт с массивом
+Плюсы:
+Массив использует меньше памяти, чем список, поскольку в нем элементы хранятся более компактно. Он хорошо подходит для хранения числовых данных и операций с фиксированными типами данных.
+Минус:
+Массив поддерживает только фиксированные типы данных.
+
+Скрипт с queue
+Плюсы:
+queue разработан для безопасного использования в многопоточной среде, что может быть полезно в некоторых сценариях. Реализация очень проста и понятна, особенно если используются стандартные механизмы Python.
+Минусы:
+queue  может быть избыточной для простого цикла FIFO, поскольку она предназначена для многопоточности и может иметь издержки. Очередь использует больше памяти, чем простой список или массив.
+
+
+
+
+ЗАДАНИЕ 3:
+
+Для сортировки массива чисел, особенно если массив может быть любого размера и в произвольном порядке, одним из наиболее эффективных алгоритмов во время выполнения является алгоритм Timsort. Это гибридный алгоритм, который сочетает в себе функции сортировки слиянием и сортировки вставкой. Он используется в Python в качестве алгоритма по умолчанию для функции sorted() и метода .sort() списков.
+
+Реализация алгоритма Timsort
+В Python вы можете использовать встроенные функции сортировки, поскольку они уже оптимизированы. Вот пример кода с использованием Timsort:
+
+def fast_sort(arr):
+    return sorted(arr)
+
+или
+
+def fast_sort_in_place(arr):
+    arr.sort()
+
+Почему Timsort является одним из самых быстрых алгоритмов?
+
+Timsort сочетает в себе алгоритмы сортировки вставкой и сортировки слиянием, что позволяет ему эффективно работать с различными типами данных и частично отсортированными массивами.
+Он использует информацию о частично отсортированных разделах (run) в массиве для оптимизации процесса сортировки, что сокращает количество требуемых операций.
+Timsort - это стабильный алгоритм, который означает, что элементы с одинаковыми значениями сохраняют свой порядок относительно друг друга.
+В среднем и в худшем случае временная сложность алгоритма составляет O(n log n), что делает его эффективным для сортировки массивов любого размера.
+
+Почему не использовать другие алгоритмы?
+
+Сортировка пузырьком и сортировка вставками имеют временную сложность O (n ^ 2) и подходят только для небольших массивов.
+Быстрая сортировка (QuickSort), хотя она имеет хорошее среднее время выполнения, равное O(n log n), в худшем случае она может иметь низкое время выполнения, равное O(n ^ 2). 
+Timsort обеспечивает более стабильное время выполнения.
+
+
+Альтернативные скрипты
+
+Сортировка слиянием (Merge Sort):
+
+def merge_sort(arr):
+    if len(arr) > 1:
+        mid = len(arr) // 2
+        left_half = arr[:mid]
+        right_half = arr[mid:]
+
+        merge_sort(left_half)
+        merge_sort(right_half)
+
+        i = j = k = 0
+
+        while i < len(left_half) and j < len(right_half):
+            if left_half[i] < right_half[j]:
+                arr[k] = left_half[i]
+                i += 1
+            else:
+                arr[k] = right_half[j]
+                j += 1
+            k += 1
+
+        while i < len(left_half):
+            arr[k] = left_half[i]
+            i += 1
+            k += 1
+
+        while j < len(right_half):
+            arr[k] = right_half[j]
+            j += 1
+            k += 1
+
+Сортировка кучей (Heap Sort):
+
+def heapify(arr, n, i):
+    largest = i
+    l = 2 * i + 1
+    r = 2 * i + 2
+
+    if l < n and arr[i] < arr[l]:
+        largest = l
+
+    if r < n and arr[largest] < arr[r]:
+        largest = r
+
+    if largest != i:
+        arr[i], arr[largest] = arr[largest], arr[i]
+        heapify(arr, n, largest)
+
+def heap_sort(arr):
+    n = len(arr)
+
+    for i in range(n // 2 - 1, -1, -1):
+        heapify(arr, n, i)
+
+    for i in range(n-1, 0, -1):
+        arr[i], arr[0] = arr[0], arr[i]
+        heapify(arr, i, 0)
+
